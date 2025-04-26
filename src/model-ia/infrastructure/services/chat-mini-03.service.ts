@@ -3,23 +3,24 @@ import { Injectable } from '@dependencies/injectable';
 import { PrimitiveMessage } from '@/model-ia/domain/entities/message.entity';
 import { ResponseModel } from '@/model-ia/domain/entities/response-model.entity';
 import * as readline from 'readline';
-import axios from 'axios';
 import { Readable } from 'node:stream';
+import { HttpClientModelService } from '@/shared/services/http-client-model.service';
+import { ExternalModelException } from '../exceptions/external-model.exception';
 
 @Injectable()
 export class ChatMini03Service extends ModelService {
+  constructor(private readonly httpClient: HttpClientModelService) {
+    super();
+  }
   async chat(messages: PrimitiveMessage[]): Promise<ResponseModel> {
-    const response = await axios('https://duckduckgo.com/duckchat/v1/chat', {
-      responseType: 'stream',
-      headers: {
-        'X-Vqd-4': '1-39317742399392818808170431571047827828',
-        'Content-Type': 'application/json',
-        'User-Agent':
-          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
-      },
-      method: 'POST',
-      data: JSON.stringify({ messages, model: 'o3-mini' }),
+    const response = await this.httpClient.post('v1/chat', {
+      messages,
+      model: 'o3-mini',
     });
+
+    if (response.status !== 200) {
+      throw new ExternalModelException(response.statusText);
+    }
 
     let modelResponse = '';
 
@@ -29,7 +30,21 @@ export class ChatMini03Service extends ModelService {
     });
 
     rl.on('line', (line) => {
-      modelResponse += line;
+      if (line.startsWith('data: [DONE]')) {
+        rl.close();
+        return;
+      }
+      const jsonInput = line.replace('data:', '');
+      const validJson = new RegExp(/\{.*?\}/);
+
+      if (!validJson.test(jsonInput)) return;
+
+      const data = JSON.parse(jsonInput) as {
+        role?: string;
+        message: string;
+      };
+      console.log(data);
+      modelResponse += data?.message ?? '';
     });
 
     return new Promise((resolve) => {

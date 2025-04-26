@@ -6,6 +6,7 @@ import { validateEnvVariables } from './shared/environment/env.validation';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       validate: validateEnvVariables,
     }),
     ModelIAModule,

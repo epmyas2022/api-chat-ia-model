@@ -5,6 +5,7 @@ import {
   IsString,
   IsNotEmpty,
   IsIn,
+  ArrayNotEmpty,
 } from 'class-validator';
 
 export class ModelMiniMessage {
@@ -21,9 +22,7 @@ export class ModelMiniMessage {
 export class ModelMiniHttpDto {
   @IsArray()
   @ValidateNested({ each: true })
+  @ArrayNotEmpty()
   @Type(() => ModelMiniMessage)
-  messages: {
-    role: string;
-    content: string;
-  }[];
+  messages: ModelMiniMessage[];
 }

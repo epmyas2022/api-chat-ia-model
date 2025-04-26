@@ -18,7 +18,6 @@ export class ModelChatUseCase {
 
     console.log(messagesEntity);
 
-    console.log(this.modelService);
     return await this.modelService.chat(messagesEntity);
   }
 }
