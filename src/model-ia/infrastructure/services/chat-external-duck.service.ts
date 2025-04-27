@@ -1,26 +1,28 @@
 import { ModelService } from '@/model-ia/domain/services/model.service';
 import { Injectable } from '@dependencies/injectable';
 import { PrimitiveMessage } from '@/model-ia/domain/entities/message.entity';
-import { ResponseModel } from '@/model-ia/domain/entities/response-model.entity';
+import {
+  PrimitiveResponse,
+  ResponseModel,
+} from '@/model-ia/domain/entities/response-model.entity';
 import * as readline from 'readline';
 import { Readable } from 'node:stream';
 import { HttpClientModelService } from '@/shared/services/http-client-model.service';
-import { ExternalModelException } from '../exceptions/external-model.exception';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class ChatMini03Service extends ModelService {
+export class ChatExternalDuckService extends ModelService {
   constructor(private readonly httpClient: HttpClientModelService) {
     super();
   }
-  async chat(messages: PrimitiveMessage[]): Promise<ResponseModel> {
+  async chat(
+    messages: PrimitiveMessage[],
+    model: string,
+  ): Promise<PrimitiveResponse> {
     const response = await this.httpClient.post('v1/chat', {
       messages,
-      model: 'o3-mini',
+      model,
     });
-
-    if (response.status !== 200) {
-      throw new ExternalModelException(response.statusText);
-    }
 
     let modelResponse = '';
 
@@ -43,21 +45,19 @@ export class ChatMini03Service extends ModelService {
         role?: string;
         message: string;
       };
-      console.log(data);
       modelResponse += data?.message ?? '';
     });
 
     return new Promise((resolve) => {
       rl.on('close', () => {
-        console.log(modelResponse);
         resolve(
           ResponseModel.create({
-            id: '1',
-            message: 'Response from ChatMini03',
-            model: 'gpt-3.5-turbo',
+            id: uuidv4(),
+            message: modelResponse,
+            model: model,
             action: 'chat',
             created: new Date(),
-          }),
+          }).toValue(),
         );
       });
     });

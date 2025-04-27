@@ -4,6 +4,7 @@ import { EnvironmentVariable } from '../environment/env.variables';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import * as readline from 'readline';
 import { Readable } from 'node:stream';
+import { ExternalModelException } from '@/model-ia/infrastructure/exceptions/external-model.exception';
 @Injectable()
 export class HttpClientModelService {
   private readonly instance: AxiosInstance;
@@ -23,27 +24,26 @@ export class HttpClientModelService {
     });
     this.instance.interceptors.response.use(
       (response) => {
-        console.log(response.data);
         return response;
       },
       (error: AxiosError) => {
-        console.error(
-          `Error in HTTP Client: ${error.message} - ${error.response?.statusText}`,
-        );
-
-        // Show headers request
-
-        console.log('Headers request:');
-        console.log(error.config?.headers);
-
         //Respuesta del servidor
-
+        let responseStream = '';
         const rl = readline.createInterface({
           input: error.response?.data as Readable,
           crlfDelay: Infinity,
         });
         rl.on('line', (line) => {
-          console.log(line);
+          responseStream += line;
+        });
+        return new Promise((_resolve, reject) => {
+          rl.on('close', () => {
+            reject(
+              new ExternalModelException(
+                `Error in HTTP Client: ${error.message} - ${responseStream}`,
+              ),
+            );
+          });
         });
       },
     );

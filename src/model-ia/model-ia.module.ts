@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ChatMini03Service } from './infrastructure/services/chat-mini-03.service';
+import { ChatExternalDuckService } from './infrastructure/services/chat-external-duck.service';
 import { ModelService } from './domain/services/model.service';
 import { ModelChatUseCase } from './application/chat/model-chat-use-case';
-import { ModelMiniController } from './infrastructure/api/chat-mini-03/model-mini.controller';
+import { ModelMiniController } from './infrastructure/api/chat/v1/model-mini.controller';
 import { HttpClientModelService } from '@/shared/services/http-client-model.service';
 
 @Module({
@@ -13,7 +13,7 @@ import { HttpClientModelService } from '@/shared/services/http-client-model.serv
     ModelChatUseCase,
     {
       provide: ModelService,
-      useClass: ChatMini03Service,
+      useClass: ChatExternalDuckService,
     },
   ],
 })
