@@ -2,7 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable } from '../dependencies/injectable';
 import { EnvironmentVariable } from '../environment/env.variables';
 import axios, { AxiosError, AxiosInstance } from 'axios';
-
+import * as readline from 'readline';
+import { Readable } from 'node:stream';
 @Injectable()
 export class HttpClientModelService {
   private readonly instance: AxiosInstance;
@@ -13,9 +14,9 @@ export class HttpClientModelService {
       baseURL: this.configService.get<string>('EXTERNAL_CHAT_IA_URL'),
       responseType: 'stream',
       headers: {
-        'x-vqd-4': this.configService.get<string>('EXTERNAL_CHAT_X_VQD_4'),
-        'content-type': 'application/json',
-        'user-agent': this.configService.get<string>(
+        'X-Vqd-4': this.configService.get<string>('EXTERNAL_CHAT_X_VQD_4'),
+        'Content-Type': 'application/json',
+        'User-Agent': this.configService.get<string>(
           'EXTERNAL_CHAT_USER_AGENT',
         ),
       },
@@ -29,7 +30,21 @@ export class HttpClientModelService {
         console.error(
           `Error in HTTP Client: ${error.message} - ${error.response?.statusText}`,
         );
-        console.log(error.response?.headers);
+
+        // Show headers request
+
+        console.log('Headers request:');
+        console.log(error.config?.headers);
+
+        //Respuesta del servidor
+
+        const rl = readline.createInterface({
+          input: error.response?.data as Readable,
+          crlfDelay: Infinity,
+        });
+        rl.on('line', (line) => {
+          console.log(line);
+        });
       },
     );
   }
