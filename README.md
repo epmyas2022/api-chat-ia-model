@@ -1,5 +1,4 @@
 
-
 # API MODEL IA CHAT
 
 Este proyecto es una api que permite interactuar con un servicio de chat basado en IA de manera gratis y sin necesidad de autenticación. Permite
@@ -14,6 +13,24 @@ crear un chat con modelos como *MINIO3*, *MINIO4*, *LLAMA*, *CLAUDE*, *MISTRAL*
 <img width="40" height="40" src="./logos/openai_dark.svg" alt="OpenIA Icon"/>
 <img width="40" height="40" src="./logos/mistral-ai_logo.svg" alt="Mistral Icon"/>
 </div>
+
+## Tabla de contenido
+
+- [API MODEL IA CHAT](#api-model-ia-chat)
+  - [Tabla de contenido](#tabla-de-contenido)
+  - [Requisitos](#requisitos)
+  - [Instalación](#instalación)
+    - [Clona el repositorio](#clona-el-repositorio)
+    - [Instala las dependencias](#instala-las-dependencias)
+  - [Configura las variables de entorno](#configura-las-variables-de-entorno)
+  - [Ejecuta el servidor](#ejecuta-el-servidor)
+  - [Uso](#uso)
+    - [MINIO3](#minio3)
+    - [MINIO4](#minio4)
+    - [LLAMA](#llama)
+    - [CLAUDE](#claude)
+    - [MISTRAL](#mistral)
+    - [About Me](#about-me)
 
 ## Requisitos
 
