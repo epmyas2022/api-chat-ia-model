@@ -6,11 +6,13 @@ import {
   MODEL_LLAMA_TURBO_ROUTE_V1,
   MODEL_CLAUDE_ROUTE_V1,
   MODEL_MISTRAL_SMALL_ROUTE_V1,
+  ABOUT_ME_ROUTE,
 } from '@/model-ia/infrastructure/routes/chat.route';
 import { ModelMiniHttpDto } from './model-mini-http.dto';
 import { ModelChatUseCase } from '../../../../application/chat/model-chat-use-case';
 import { ModelIA } from '../../../enum/model.enum';
 import { HttpExceptionFilter } from '@/model-ia/infrastructure/filters/http-exception.filter';
+import { promptAboutMe } from '@/model-ia/infrastructure/prompts/prompt';
 
 @Controller(MODEL_BASE_PATH)
 @UseFilters(new HttpExceptionFilter())
@@ -53,6 +55,14 @@ export class ModelMiniController {
     return await this.modelChatUseCase.execute(
       chatModelMiniHttpDto,
       ModelIA.MISTRAL_SMALL,
+    );
+  }
+
+  @Post(ABOUT_ME_ROUTE)
+  async chatAboutMe(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+    return await this.modelChatUseCase.execute(
+      promptAboutMe(chatModelMiniHttpDto),
+      ModelIA.GPT_MINI_O4,
     );
   }
 }
