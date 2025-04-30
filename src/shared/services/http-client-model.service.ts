@@ -26,6 +26,10 @@ export class HttpClientModelService extends HttpClientService {
     });
     this.instance.interceptors.response.use(
       (response) => {
+        const xvqd4 = response.headers['x-vqd-4'] as string;
+        if (xvqd4) {
+          this.instance.defaults.headers['X-Vqd-4'] = xvqd4;
+        }
         return response;
       },
       (error: AxiosError) => {
