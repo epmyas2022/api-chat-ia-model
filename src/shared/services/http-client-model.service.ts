@@ -5,12 +5,14 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import * as readline from 'readline';
 import { Readable } from 'node:stream';
 import { ExternalModelException } from '@/model-ia/infrastructure/exceptions/external-model.exception';
+import { HttpClientService } from '../domain/services/http-client.service';
 @Injectable()
-export class HttpClientModelService {
+export class HttpClientModelService extends HttpClientService {
   private readonly instance: AxiosInstance;
   constructor(
     private readonly configService: ConfigService<EnvironmentVariable>,
   ) {
+    super();
     this.instance = axios.create({
       baseURL: this.configService.get<string>('EXTERNAL_CHAT_IA_URL'),
       responseType: 'stream',
@@ -49,19 +51,20 @@ export class HttpClientModelService {
     );
   }
 
-  async get<T>(url: string, params?: Record<string, unknown>) {
-    return this.instance.get<T>(url, { params });
+  async get<T>(url: string, params?: Record<string, unknown>): Promise<T> {
+    const response = await this.instance.get<T>(url, { params });
+    return response.data;
   }
-
-  async post<T>(url: string, data?: Record<string, unknown>) {
-    return await this.instance.post<T>(url, data);
+  async post<T>(url: string, data?: Record<string, unknown>): Promise<T> {
+    const response = await this.instance.post<T>(url, data);
+    return response.data;
   }
-
-  async put<T>(url: string, data?: Record<string, unknown>) {
-    return this.instance.put<T>(url, data);
+  async put<T>(url: string, data?: Record<string, unknown>): Promise<T> {
+    const response = await this.instance.put<T>(url, data);
+    return response.data;
   }
-
-  async delete<T>(url: string, params?: Record<string, unknown>) {
-    return this.instance.delete<T>(url, { params });
+  async delete<T>(url: string, params?: Record<string, unknown>): Promise<T> {
+    const response = await this.instance.delete<T>(url, { params });
+    return response.data;
   }
 }

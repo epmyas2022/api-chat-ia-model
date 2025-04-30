@@ -4,6 +4,7 @@ import { ModelService } from './domain/services/model.service';
 import { ModelChatUseCase } from './application/chat/model-chat-use-case';
 import { ModelMiniController } from './infrastructure/api/chat/v1/model-mini.controller';
 import { HttpClientModelService } from '@/shared/services/http-client-model.service';
+import { HttpClientService } from '@/shared/domain/services/http-client.service';
 
 @Module({
   imports: [],
@@ -14,6 +15,10 @@ import { HttpClientModelService } from '@/shared/services/http-client-model.serv
     {
       provide: ModelService,
       useClass: ChatExternalDuckService,
+    },
+    {
+      provide: HttpClientService,
+      useClass: HttpClientModelService,
     },
   ],
 })

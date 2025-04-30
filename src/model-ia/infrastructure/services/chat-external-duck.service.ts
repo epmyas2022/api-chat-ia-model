@@ -7,12 +7,12 @@ import {
 } from '@/model-ia/domain/entities/response-model.entity';
 import * as readline from 'readline';
 import { Readable } from 'node:stream';
-import { HttpClientModelService } from '@/shared/services/http-client-model.service';
 import { v4 as uuidv4 } from 'uuid';
+import { HttpClientService } from '@/shared/domain/services/http-client.service';
 
 @Injectable()
 export class ChatExternalDuckService extends ModelService {
-  constructor(private readonly httpClient: HttpClientModelService) {
+  constructor(private readonly httpClient: HttpClientService) {
     super();
   }
   async chat(
@@ -27,7 +27,7 @@ export class ChatExternalDuckService extends ModelService {
     let modelResponse = '';
 
     const rl = readline.createInterface({
-      input: response.data as Readable,
+      input: response as Readable,
       crlfDelay: Infinity,
     });
 
