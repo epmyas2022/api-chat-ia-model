@@ -5,6 +5,8 @@ import { ModelChatUseCase } from './application/chat/model-chat-use-case';
 import { ModelMiniController } from './infrastructure/api/chat/v1/model-mini.controller';
 import { HttpClientModelService } from '@/shared/services/http-client-model.service';
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
+import { GetApiKeyService } from './domain/services/get-api-key.service';
+import { GetExternalDuckVqdService } from './infrastructure/services/get-external-duck-vqd.service';
 
 @Module({
   imports: [],
@@ -19,6 +21,10 @@ import { HttpClientService } from '@/shared/domain/services/http-client.service'
     {
       provide: HttpClientService,
       useClass: HttpClientModelService,
+    },
+    {
+      provide: GetApiKeyService,
+      useClass: GetExternalDuckVqdService,
     },
   ],
 })
