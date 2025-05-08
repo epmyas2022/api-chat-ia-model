@@ -7,8 +7,7 @@ export function loadPrompt(path: string): string {
     const prompt = fs.readFileSync(path, 'utf8');
     return prompt;
   } catch (error) {
-    console.error(`Error loading prompt from ${path}:`, error);
-    throw new Error(`Failed to load prompt: ${error}`);
+    throw new Error(`Failed to load prompt: ${error} ${path}`);
   }
 }
 
