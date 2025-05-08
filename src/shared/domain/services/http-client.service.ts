@@ -1,9 +1,11 @@
 import { Injectable } from '@/shared/dependencies/injectable';
+import { PrimitiveHttpResponse } from '../entities/response.entity';
 
 @Injectable()
 export abstract class HttpClientService {
-  abstract get<T>(url: string, params?: Record<string, unknown>): Promise<T>;
-  abstract post<T>(url: string, data?: Record<string, unknown>): Promise<T>;
-  abstract put<T>(url: string, data?: Record<string, unknown>): Promise<T>;
-  abstract delete<T>(url: string, params?: Record<string, unknown>): Promise<T>;
+  abstract post(
+    url: string,
+    data?: Record<string, unknown>,
+    options?: object,
+  ): Promise<PrimitiveHttpResponse>;
 }

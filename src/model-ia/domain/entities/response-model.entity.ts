@@ -3,6 +3,7 @@ export class PrimitiveResponse {
   message: string;
   action: string;
   model?: string;
+  key: string;
   created: Date;
 }
 
@@ -15,6 +16,7 @@ export class ResponseModel {
     action: string;
     model?: string;
     created: Date;
+    key: string;
   }): ResponseModel {
     return new ResponseModel(attributes);
   }

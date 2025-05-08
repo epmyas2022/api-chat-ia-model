@@ -13,6 +13,7 @@ import { ModelChatUseCase } from '../../../../application/chat/model-chat-use-ca
 import { ModelIA } from '../../../enum/model.enum';
 import { HttpExceptionFilter } from '@/model-ia/infrastructure/filters/http-exception.filter';
 import { promptAboutMe } from '@/model-ia/infrastructure/prompts/prompt';
+import { CursorResponse } from '../../../responses/cursor.response';
 
 @Controller(MODEL_BASE_PATH)
 @UseFilters(new HttpExceptionFilter())
@@ -60,9 +61,11 @@ export class ModelMiniController {
 
   @Post(ABOUT_ME_ROUTE)
   async chatAboutMe(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    return await this.modelChatUseCase.execute(
+    const { response, cursor } = await this.modelChatUseCase.execute(
       promptAboutMe(chatModelMiniHttpDto),
       ModelIA.GPT_MINI_O4,
     );
+
+    return new CursorResponse(response, cursor).json();
   }
 }

@@ -9,6 +9,7 @@ import * as readline from 'readline';
 import { Readable } from 'node:stream';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
+import { PrimitiveHttpResponse } from '@/shared/domain/entities/response.entity';
 
 @Injectable()
 export class ChatExternalDuckService extends ModelService {
@@ -18,16 +19,25 @@ export class ChatExternalDuckService extends ModelService {
   async chat(
     messages: PrimitiveMessage[],
     model: string,
+    key: string,
   ): Promise<PrimitiveResponse> {
-    const response = await this.httpClient.post('v1/chat', {
-      messages,
-      model,
-    });
+    const response: PrimitiveHttpResponse = await this.httpClient.post(
+      'v1/chat',
+      {
+        messages,
+        model,
+      },
+      { headers: { 'X-Vqd-4': key } },
+    );
+
+    const XVQ4 = response.headers['x-vqd-4'] as string;
+
+    console.log('new XVQ4', XVQ4);
 
     let modelResponse = '';
 
     const rl = readline.createInterface({
-      input: response as Readable,
+      input: response.data as Readable,
       crlfDelay: Infinity,
     });
 
@@ -57,6 +67,7 @@ export class ChatExternalDuckService extends ModelService {
             model: model,
             action: 'chat',
             created: new Date(),
+            key: XVQ4,
           }).toValue(),
         );
       });

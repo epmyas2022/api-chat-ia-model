@@ -4,5 +4,6 @@ export abstract class ModelService {
   abstract chat(
     messages: PrimitiveMessage[],
     model: string,
+    key: string,
   ): Promise<PrimitiveResponse>;
 }
