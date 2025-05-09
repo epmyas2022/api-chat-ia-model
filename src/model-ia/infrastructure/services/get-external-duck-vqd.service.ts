@@ -46,7 +46,7 @@ export class GetExternalDuckVqdService
     const context = await newInjectedContext(this.browser, {
       fingerprintOptions: {
         devices: ['desktop', 'mobile'],
-        operatingSystems: ['ios', 'android', 'windows', 'linux'],
+        operatingSystems: ['ios', 'android', 'windows', 'linux', 'macos'],
       },
     });
 
