@@ -25,6 +25,7 @@ export class ChatExternalDuckService extends ModelService {
     model: string,
     fingerprint: PrimitiveFingerprint,
   ): Promise<PrimitiveResponse> {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const response: PrimitiveHttpResponse = await this.httpClient.post(
       'v1/chat',
       {
