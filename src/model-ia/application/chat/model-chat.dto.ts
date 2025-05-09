@@ -3,4 +3,5 @@ export class ModelChatDto {
     role: 'user' | 'assistant';
     content: string;
   }[];
+  cursor?: string;
 }

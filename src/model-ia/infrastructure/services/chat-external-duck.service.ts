@@ -10,6 +10,10 @@ import { Readable } from 'node:stream';
 import { v4 as uuidv4 } from 'uuid';
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
 import { PrimitiveHttpResponse } from '@/shared/domain/entities/response.entity';
+import {
+  Fingerprint,
+  PrimitiveFingerprint,
+} from '@/model-ia/domain/entities/fingerprint.entity';
 
 @Injectable()
 export class ChatExternalDuckService extends ModelService {
@@ -19,7 +23,7 @@ export class ChatExternalDuckService extends ModelService {
   async chat(
     messages: PrimitiveMessage[],
     model: string,
-    key: string,
+    fingerprint: PrimitiveFingerprint,
   ): Promise<PrimitiveResponse> {
     const response: PrimitiveHttpResponse = await this.httpClient.post(
       'v1/chat',
@@ -27,12 +31,15 @@ export class ChatExternalDuckService extends ModelService {
         messages,
         model,
       },
-      { headers: { 'X-Vqd-4': key } },
+      {
+        headers: {
+          'X-Vqd-4': fingerprint.key,
+          'User-Agent': fingerprint.userAgent,
+        },
+      },
     );
 
     const XVQ4 = response.headers['x-vqd-4'] as string;
-
-    console.log('new XVQ4', XVQ4);
 
     let modelResponse = '';
 
@@ -58,6 +65,10 @@ export class ChatExternalDuckService extends ModelService {
       modelResponse += data?.message ?? '';
     });
 
+    const newFingerprint = Fingerprint.create({
+      key: XVQ4,
+      userAgent: fingerprint.userAgent,
+    });
     return new Promise((resolve) => {
       rl.on('close', () => {
         resolve(
@@ -67,7 +78,7 @@ export class ChatExternalDuckService extends ModelService {
             model: model,
             action: 'chat',
             created: new Date(),
-            key: XVQ4,
+            fingerprint: newFingerprint.toValue(),
           }).toValue(),
         );
       });

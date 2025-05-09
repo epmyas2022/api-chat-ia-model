@@ -19,15 +19,15 @@ export class ModelChatUseCase {
   private async getCursorDefault(
     messages: PrimitiveMessage[],
   ): Promise<ChatCursor> {
-    const apiKey = await this.getApiKeyService.getApiKey();
-    return new ChatCursor(messages, apiKey);
+    const fingerprint = await this.getApiKeyService.getApiKey();
+    console.log('fingerprint since duck:', fingerprint);
+    return new ChatCursor(messages, fingerprint);
   }
   async execute(
     modelChat: ModelChatDto,
     model: string,
-    cursorInput?: string,
   ): Promise<{ response: PrimitiveResponse; cursor: ChatCursor }> {
-    const { messages } = modelChat;
+    const { messages, cursor: cursorInput } = modelChat;
 
     const messagesEntity = messages.map((message) => {
       const { role, content } = message;
@@ -38,12 +38,10 @@ export class ModelChatUseCase {
       ? ChatCursor.fromBase64(cursorInput, messagesEntity)
       : await this.getCursorDefault(messagesEntity);
 
-    messagesEntity.push(...cursor.Messages);
-
     const response = await this.modelService.chat(
-      messagesEntity,
+      cursor.Messages,
       model,
-      cursor.Key,
+      cursor.Fingerprint,
     );
 
     const messageAssistant = Message.create({
@@ -51,9 +49,9 @@ export class ModelChatUseCase {
       content: response.message,
     }).toValue();
 
-    messagesEntity.push(messageAssistant);
+    cursor.Messages.push(messageAssistant);
 
-    const nextCursor = new ChatCursor(messagesEntity, response.key);
+    const nextCursor = new ChatCursor(cursor.Messages, response.fingerprint);
 
     return { response: response, cursor: nextCursor };
   }

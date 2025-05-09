@@ -6,6 +6,11 @@ import { ConfigService } from '@nestjs/config';
 import { Browser } from 'playwright';
 import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { newInjectedContext } from 'fingerprint-injector';
+import {
+  Fingerprint,
+  PrimitiveFingerprint,
+} from '@/model-ia/domain/entities/fingerprint.entity';
 
 @Injectable()
 export class GetExternalDuckVqdService
@@ -33,20 +38,25 @@ export class GetExternalDuckVqdService
       await this.browser.close();
     }
   }
-  async getApiKey(): Promise<string> {
+  async getApiKey(): Promise<PrimitiveFingerprint> {
     if (!this.browser) {
       await this.onModuleInit();
     }
     const externalUrl = this.configService.get<string>('EXTERNAL_API_KEY');
-    const context = await this.browser.newContext({
-      userAgent: this.configService.get<string>('EXTERNAL_CHAT_USER_AGENT'),
+    const context = await newInjectedContext(this.browser, {
+      fingerprintOptions: {
+        devices: ['desktop', 'mobile'],
+        operatingSystems: ['ios', 'android', 'windows', 'linux'],
+      },
     });
+
     const page = await context.newPage();
 
     let vqd: string = '';
 
     await page.route('**/*', async (route, request) => {
       const headers = request.headers();
+
       if (request.method() === 'POST' && headers['x-vqd-4']) {
         vqd = headers['x-vqd-4'];
       }
@@ -55,6 +65,8 @@ export class GetExternalDuckVqdService
     });
 
     await page.goto(externalUrl!);
+
+    const userAgent = await page.evaluate(() => navigator.userAgent);
 
     await page.waitForSelector(
       'button[type="button"]:has-text("Give It a Try")',
@@ -73,6 +85,10 @@ export class GetExternalDuckVqdService
     await page.waitForSelector('button[type="submit"]');
     await page.click('button[type="submit"]');
 
-    return vqd;
+    const fingerprint = Fingerprint.create({
+      key: vqd,
+      userAgent: userAgent,
+    });
+    return fingerprint.toValue();
   }
 }

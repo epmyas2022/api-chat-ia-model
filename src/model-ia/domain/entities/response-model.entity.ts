@@ -1,9 +1,11 @@
+import { PrimitiveFingerprint } from './fingerprint.entity';
+
 export class PrimitiveResponse {
   id: string;
   message: string;
   action: string;
   model?: string;
-  key: string;
+  fingerprint: PrimitiveFingerprint;
   created: Date;
 }
 
@@ -16,7 +18,7 @@ export class ResponseModel {
     action: string;
     model?: string;
     created: Date;
-    key: string;
+    fingerprint: PrimitiveFingerprint;
   }): ResponseModel {
     return new ResponseModel(attributes);
   }
@@ -26,6 +28,12 @@ export class ResponseModel {
   }
 
   toObject() {
-    return { ...this.attributes };
+    return {
+      id: this.attributes.id,
+      message: this.attributes.message,
+      action: this.attributes.action,
+      model: this.attributes.model,
+      created: this.attributes.created,
+    };
   }
 }

@@ -1,14 +1,19 @@
 import { PrimitiveMessage } from '../entities/message.entity';
+import {
+  Fingerprint,
+  PrimitiveFingerprint,
+} from '../entities/fingerprint.entity';
 
 export class ChatCursor {
   constructor(
     private readonly messages: PrimitiveMessage[],
-    private readonly key: string,
+    private readonly fingerprint: PrimitiveFingerprint,
   ) {}
 
   toBase64(): string {
     const json = JSON.stringify({
-      key: this.key,
+      key: this.fingerprint.key,
+      userAgent: this.fingerprint.userAgent,
       messages: this.messages.filter((message) => !message.hidden),
     });
 
@@ -19,19 +24,25 @@ export class ChatCursor {
     newMessages?: PrimitiveMessage[],
   ): ChatCursor {
     const json = Buffer.from(base64, 'base64').toString('utf-8');
-    const { key, messages } = JSON.parse(json) as {
+
+    const { key, userAgent, messages } = JSON.parse(json) as {
       key: string;
+      userAgent: string;
       messages: PrimitiveMessage[];
     };
 
     if (newMessages) {
       messages.push(...newMessages);
     }
-    return new ChatCursor(messages, key);
+    const fingerprint = Fingerprint.create({
+      key,
+      userAgent,
+    });
+    return new ChatCursor(messages, fingerprint.toValue());
   }
 
-  get Key(): string {
-    return this.key;
+  get Fingerprint(): PrimitiveFingerprint {
+    return this.fingerprint;
   }
   get Messages(): PrimitiveMessage[] {
     return this.messages;

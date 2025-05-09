@@ -69,7 +69,6 @@ export class ModelMiniController {
       modelChat,
       ModelIA.GPT_MINI_O4,
     );
-    console.log(cursor);
     return new CursorResponse(response, cursor).json();
   }
 }
