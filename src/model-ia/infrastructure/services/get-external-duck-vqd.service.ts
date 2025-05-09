@@ -38,7 +38,9 @@ export class GetExternalDuckVqdService
       await this.onModuleInit();
     }
     const externalUrl = this.configService.get<string>('EXTERNAL_API_KEY');
-    const context = await this.browser.newContext();
+    const context = await this.browser.newContext({
+      userAgent: this.configService.get<string>('EXTERNAL_CHAT_USER_AGENT'),
+    });
     const page = await context.newPage();
 
     let vqd: string = '';

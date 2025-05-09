@@ -38,6 +38,8 @@ export class ModelChatUseCase {
       ? ChatCursor.fromBase64(cursorInput, messagesEntity)
       : await this.getCursorDefault(messagesEntity);
 
+    messagesEntity.push(...cursor.Messages);
+
     const response = await this.modelService.chat(
       messagesEntity,
       model,

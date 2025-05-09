@@ -61,8 +61,12 @@ export class ModelMiniController {
 
   @Post(ABOUT_ME_ROUTE)
   async chatAboutMe(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+    const modelChat = !chatModelMiniHttpDto.cursor
+      ? promptAboutMe(chatModelMiniHttpDto)
+      : chatModelMiniHttpDto;
+
     const { response, cursor } = await this.modelChatUseCase.execute(
-      promptAboutMe(chatModelMiniHttpDto),
+      modelChat,
       ModelIA.GPT_MINI_O4,
     );
     console.log(cursor);
