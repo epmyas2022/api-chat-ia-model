@@ -1,6 +1,6 @@
 export class ModelChatDto {
   messages: {
-    role: string;
+    role: 'user' | 'assistant';
     content: string;
   }[];
 }

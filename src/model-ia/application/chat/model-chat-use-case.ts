@@ -38,12 +38,18 @@ export class ModelChatUseCase {
       ? ChatCursor.fromBase64(cursorInput, messagesEntity)
       : await this.getCursorDefault(messagesEntity);
 
-    console.log('cursor', cursor);
     const response = await this.modelService.chat(
       messagesEntity,
       model,
       cursor.Key,
     );
+
+    const messageAssistant = Message.create({
+      role: 'assistant',
+      content: response.message,
+    }).toValue();
+
+    messagesEntity.push(messageAssistant);
 
     const nextCursor = new ChatCursor(messagesEntity, response.key);
 
