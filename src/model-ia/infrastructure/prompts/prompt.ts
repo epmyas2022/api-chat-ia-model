@@ -1,6 +1,5 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { ModelMiniHttpDto } from '../api/chat/v1/model-mini-http.dto';
 
 export function loadPrompt(path: string): string {
   try {
@@ -11,12 +10,13 @@ export function loadPrompt(path: string): string {
   }
 }
 
-export function promptAboutMe(dto: ModelMiniHttpDto): ModelMiniHttpDto {
+export function promptAboutMe(): {
+  role: 'user' | 'assistant';
+  content: string;
+} {
   const content = loadPrompt(path.join(__dirname, 'about-me.txt'));
-  dto.messages.push({
+  return {
     role: 'user',
     content: content,
-  });
-  dto.messages.reverse();
-  return dto;
+  };
 }
