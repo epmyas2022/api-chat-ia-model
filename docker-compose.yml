@@ -1,0 +1,29 @@
+name: 'api-chat-ia'
+services:
+  api-development:
+    build:
+      context: .
+      target: 'development'
+      dockerfile: .docker/Dockerfile
+    image: 'api-model:castor'
+    privileged: true
+    container_name: 'api-model-ia'
+    ports:
+      - '${PORT:-9000}:${PORT:-3000}'
+    volumes:
+      - '/app/node_modules'
+      - '.:/app'
+  api-production:
+    build:
+      context: .
+      target: 'runner'
+      dockerfile: .docker/Dockerfile
+    image: 'api-model:castor-prod'
+    container_name: 'api-model-ia-prod'
+    privileged: true
+    ports:
+      - '${PORT:-8080}:${PORT:-3000}'
+volumes:
+  app:
+    external: true
+  

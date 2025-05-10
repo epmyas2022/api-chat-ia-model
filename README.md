@@ -24,6 +24,7 @@ crear un chat con modelos como *MINIO3*, *MINIO4*, *LLAMA*, *CLAUDE*, *MISTRAL*
     - [Instala las dependencias](#instala-las-dependencias)
   - [Configura las variables de entorno](#configura-las-variables-de-entorno)
   - [Ejecuta el servidor](#ejecuta-el-servidor)
+  - [Instalación con Docker](#instalación-con-docker)
   - [Uso](#uso)
     - [MINIO3](#minio3)
     - [MINIO4](#minio4)
@@ -52,6 +53,12 @@ cd api-model-ia-chat
 npm install
 ```
 
+Instalar navegadores de playwright
+
+```bash
+npx playwright install
+```
+
 ## Configura las variables de entorno
 
 Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variables:
@@ -60,6 +67,8 @@ Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variable
 EXTERNAL_CHAT_IA_URL=<url (ej: https://duckduckgo.com/duckchat/)>
 EXTERNAL_API_KEY=<string | url> (ej: https://duckduckgo.com/?q=DuckDuckGo+AI+Chat&ia=chat&duckai=1)>
 SECRET_KEY=<string hex 64 chars>
+HOST=<string optional> (ej: 127.0.0.1)
+PORT=<number optional> (ej: 3000)
 ````
 
 ## Ejecuta el servidor
@@ -74,6 +83,32 @@ si estas en desarrollo puedes usar el siguiente comando para que se reinicie aut
 npm run start:dev
 ```
 
+## Instalación con Docker
+
+Para levantar un servicio de desarrollo puedes usar el siguiente comando:
+
+```bash
+docker-compose up -d api-development
+```
+
+Puedes consultar el servicio en la siguiente url:
+
+```bash
+http://localhost:9000
+```
+
+Para levantar un servicio de producción puedes usar el siguiente comando:
+
+```bash
+docker-compose up -d api-production
+```
+
+Puedes consultar el servicio en la siguiente url:
+
+```bash
+http://localhost:8080
+```
+
 ## Uso
 
 Para todos lo modelos la estructura de la peticion es la siguiente:
@@ -81,28 +116,21 @@ Para todos lo modelos la estructura de la peticion es la siguiente:
 ```json
 {
  
-    "messages": [
-        {
-            "role": "<user | assistant>",
-            "content": "<mensaje>",
-        }
-    ]
-}
+    "message": "Hola, ¿cómo estás?",
+    "cursor": null
+}   
 ```
+
+Para mantener la conversacion puedes usar el cursor que se devuelve en la respuesta anterior.
 
 ### MINIO3
 
 ```bash
 curl -X POST http://localhost:3000/chat/v1/mini03 \
 -H "Content-Type: application/json" \
--d '{
-    "messages": [
-        {
-            "role": "user",
-            "content": "Hola, ¿cómo estás?"
-        }
-    ]
-}'
+-d '{ 
+    "message": "Hola, ¿cómo estás?",
+    }
 ```
 
 ### MINIO4
@@ -111,12 +139,7 @@ curl -X POST http://localhost:3000/chat/v1/mini03 \
 curl -X POST http://localhost:3000/chat/v1/mini04 \
 -H "Content-Type: application/json" \
 -d '{
-    "messages": [
-        {
-            "role": "user",
-            "content": "Hola, ¿cómo estás?"
-        }
-    ]
+   "message": "Hola, ¿cómo estás?",
 }'
 ```
 
@@ -126,12 +149,7 @@ curl -X POST http://localhost:3000/chat/v1/mini04 \
 curl -X POST http://localhost:3000/chat/v1/llama-turbo \
 -H "Content-Type: application/json" \
 -d '{
-    "messages": [
-        {
-            "role": "user",
-            "content": "Hola, ¿cómo estás?"
-        }
-    ]
+     "message": "Hola, ¿cómo estás?",
 }'
 ```
 
@@ -141,12 +159,9 @@ curl -X POST http://localhost:3000/chat/v1/llama-turbo \
 curl -X POST http://localhost:3000/chat/v1/claude \
 -H "Content-Type: application/json" \
 -d '{
-    "messages": [
-        {
-            "role": "user",
-            "content": "Hola, ¿cómo estás?"
-        }
-    ]
+      "message": "Hola, ¿cómo estás?",
+      "cursor": "9rsYHc2xXMCK7gF5HkEkFQ==#u7oUCWrDkimV4TKUaIJNsySQ2DPoe2JknqiJ36ccNPeDO/DomtEkHVOTB8mrpPo1huTa5vWGCbM"
+
 }'
 ```
 
@@ -156,12 +171,8 @@ curl -X POST http://localhost:3000/chat/v1/claude \
 curl -X POST http://localhost:3000/chat/v1/mistral-small \
 -H "Content-Type: application/json" \
 -d '{
-    "messages": [
-        {
-            "role": "user",
-            "content": "Hola, ¿cómo estás?"
-        }
-    ]
+    "message": "Hola, ¿cómo estás?"
+    "cursor": "9rsYHc2xXMCK7gF5HkEkFQ==#u7oUCWrDkimV4TKUaIJNsySQ2DPoe2JknqiJ36ccNPeDO/DomtEkHVOTB8mrpPo1huTa5vWGCbM"
 }'
 ```
 
@@ -171,23 +182,22 @@ curl -X POST http://localhost:3000/chat/v1/mistral-small \
 curl -X POST http://localhost:3000/chat/about-me \
 -H "Content-Type: application/json" \
 -d '{
-    "messages": [
-        {
-            "role": "user",
-            "content": "Hola, ¿cómo estás?"
-        }
-    ]
+    "message": "Hola, ¿cómo estás?",
 }'
 ```
 
 Repuesta esperada:
 
 ```json
+
 {
- "id": "bb1045a0-a6ee-4b06-9cdb-d74fd2a9f7f9",
- "message": "¡Hola! Soy Isaac Castillo, un desarrollador de software. Estoy bien, gracias. ¿Y tú? Si tienes preguntas sobre mi trabajo o habilidades en desarrollo de aplicaciones web/móviles o inteligencia artificial, estaré encantado de ayudarte. 😊",
- "model": "gpt-4o-mini",
- "action": "chat",
- "created": "2025-04-28T14:44:26.655Z"
+ "chat": {
+  "id": "62c86d0a-d4a6-460f-bf23-e1a4129487d0",
+  "model": "gpt-4o-mini",
+  "message": "¡Hola! Soy Isaac Castillo, desarrollador de software con 2 años de experiencia en aplicaciones web y móviles. Actualmente trabajo en la Secretaría de Innovación de El Salvador. En mi tiempo libre disfruto jugar videojuegos, fútbol y pasar tiempo con mi gato Parches. Si tienes preguntas sobre mi trabajo o habilidades, estaré encantado de ayudarte. 😊",
+  "created": "2025-05-10T19:20:07.943Z",
+  "action": "chat"
+ },
+ "cursor": "9rsYHc2xXMCK7gF5HkEkFQ==#u7oUCWrDkimV4TKUaIJNsySQ2DPoe2JknqiJ36ccNPeDO/DomtEkHVOTB8mrpPo1huTa5vWGCbM"
 }
 ```
