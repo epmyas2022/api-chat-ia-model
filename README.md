@@ -58,8 +58,7 @@ Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variable
 
 ```env
 EXTERNAL_CHAT_IA_URL=<url (ej: https://duckduckgo.com/duckchat/)>
-EXTERNAL_CHAT_X_VQD_4=<id_vqd (ej: 4-68798773809470454447676325217074174164)>
-EXTERNAL_CHAT_USER_AGENT=<user_agent>
+EXTERNAL_API_KEY=<string | url> (ej: https://duckduckgo.com/?q=DuckDuckGo+AI+Chat&ia=chat&duckai=1)>
 ````
 
 ## Ejecuta el servidor
