@@ -7,6 +7,8 @@ import { HttpClientModelService } from '@/shared/services/http-client-model.serv
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
 import { GetApiKeyService } from './domain/services/get-api-key.service';
 import { GetExternalDuckVqdService } from './infrastructure/services/get-external-duck-vqd.service';
+import { EncryptService } from './domain/services/encrypt.service';
+import { CryptoService } from './infrastructure/services/crypto.service';
 
 @Module({
   imports: [],
@@ -25,6 +27,11 @@ import { GetExternalDuckVqdService } from './infrastructure/services/get-externa
     {
       provide: GetApiKeyService,
       useClass: GetExternalDuckVqdService,
+    },
+
+    {
+      provide: EncryptService,
+      useClass: CryptoService,
     },
   ],
 })

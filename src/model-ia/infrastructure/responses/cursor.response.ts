@@ -1,15 +1,21 @@
-import { ChatCursor } from '@/model-ia/domain/cursors/chat.cursor';
+import { PrimitiveResponse } from '@/model-ia/domain/entities/response-model.entity';
 
 export class CursorResponse {
   constructor(
-    private readonly chat: unknown,
-    private readonly cursor: ChatCursor,
+    private readonly chat: PrimitiveResponse,
+    private readonly cursor: string,
   ) {}
 
   json() {
     return {
-      chat: this.chat,
-      cursor: this.cursor.toBase64(),
+      chat: {
+        id: this.chat.id,
+        model: this.chat.model,
+        message: this.chat.message,
+        created: this.chat.created,
+        action: this.chat.action,
+      },
+      cursor: this.cursor,
     };
   }
 }

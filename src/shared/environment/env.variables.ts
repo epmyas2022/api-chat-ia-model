@@ -1,13 +1,12 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
-export type EnvironmentVariableType = {
-  PORT?: string | number;
-  HOST?: string;
-  EXTERNAL_CHAT_IA_URL: string;
-  EXTERNAL_API_KEY: string;
-};
-
-export class EnvironmentVariable implements EnvironmentVariableType {
+export class EnvironmentVariable {
   @IsString()
   @IsNumber()
   @IsOptional()
@@ -23,4 +22,9 @@ export class EnvironmentVariable implements EnvironmentVariableType {
   @IsString()
   @IsNotEmpty()
   EXTERNAL_API_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(32)
+  SECRET_KEY: string;
 }

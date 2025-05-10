@@ -7,7 +7,6 @@ import {
   IsIn,
   ArrayNotEmpty,
   IsOptional,
-  IsBase64,
 } from 'class-validator';
 
 export class ModelMiniMessage {
@@ -30,6 +29,5 @@ export class ModelMiniHttpDto {
 
   @IsString()
   @IsOptional()
-  @IsBase64()
   cursor?: string;
 }

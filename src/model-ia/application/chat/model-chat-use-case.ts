@@ -8,25 +8,35 @@ import { PrimitiveResponse } from '@/model-ia/domain/entities/response-model.ent
 import { Injectable } from '@dependencies/injectable';
 import { ChatCursor } from '@/model-ia/domain/cursors/chat.cursor';
 import { GetApiKeyService } from '@/model-ia/domain/services/get-api-key.service';
+import { EncryptService } from '@/model-ia/domain/services/encrypt.service';
 
 @Injectable()
 export class ModelChatUseCase {
   constructor(
     private readonly modelService: ModelService,
     private readonly getApiKeyService: GetApiKeyService,
+    private readonly encryptService: EncryptService,
   ) {}
 
   private async getCursorDefault(
     messages: PrimitiveMessage[],
   ): Promise<ChatCursor> {
     const fingerprint = await this.getApiKeyService.getApiKey();
-    console.log('fingerprint since duck:', fingerprint);
     return new ChatCursor(messages, fingerprint);
+  }
+
+  private async getCursor(
+    messages: PrimitiveMessage[],
+    cursorInput: string,
+  ): Promise<ChatCursor> {
+    const decode = await this.encryptService.decode(cursorInput);
+    const cursor = ChatCursor.fromBase64(decode, messages);
+    return cursor;
   }
   async execute(
     modelChat: ModelChatDto,
     model: string,
-  ): Promise<{ response: PrimitiveResponse; cursor: ChatCursor }> {
+  ): Promise<{ response: PrimitiveResponse; cursor: string }> {
     const { messages, cursor: cursorInput } = modelChat;
 
     const messagesEntity = messages.map((message) => {
@@ -35,7 +45,7 @@ export class ModelChatUseCase {
     });
 
     const cursor = cursorInput
-      ? ChatCursor.fromBase64(cursorInput, messagesEntity)
+      ? await this.getCursor(messagesEntity, cursorInput)
       : await this.getCursorDefault(messagesEntity);
 
     const response = await this.modelService.chat(
@@ -53,6 +63,9 @@ export class ModelChatUseCase {
 
     const nextCursor = new ChatCursor(cursor.Messages, response.fingerprint);
 
-    return { response: response, cursor: nextCursor };
+    const encodeCursor = await this.encryptService.encode(
+      nextCursor.toBase64(),
+    );
+    return { response: response, cursor: encodeCursor };
   }
 }
