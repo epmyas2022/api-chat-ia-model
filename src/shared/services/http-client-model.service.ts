@@ -20,9 +20,6 @@ export class HttpClientModelService extends HttpClientService {
       responseType: 'stream',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': this.configService.get<string>(
-          'EXTERNAL_CHAT_USER_AGENT',
-        ),
       },
     });
 
