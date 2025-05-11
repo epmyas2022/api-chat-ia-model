@@ -33,11 +33,11 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
          echo "Building Docker image with version: $VERSION"
-         docker build . --file .docker/Dockerfile -t api-model-ia:$VERSION
+         docker build . --target runner --file .docker/Dockerfile -t epmyas2022/api-model-ia:$VERSION
       
       - name: Push the Docker image
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           echo "Pushing Docker image with version: $VERSION"
-          docker push api-model-ia:$VERSION
+          docker push epmyas2022/api-model-ia:$VERSION
