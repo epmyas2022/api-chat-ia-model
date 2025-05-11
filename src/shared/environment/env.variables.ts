@@ -1,14 +1,6 @@
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class EnvironmentVariable {
-  @IsString()
-  @IsNumber()
   @IsOptional()
   PORT?: string | number;
 
