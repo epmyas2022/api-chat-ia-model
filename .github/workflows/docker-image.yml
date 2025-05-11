@@ -2,17 +2,43 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v4
+
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v5.2.1
+        id: version
+        with:
+          major_pattern: 'major:'
+          minor_pattern: 'feat:'
+          version_format: '${major}.${minor}.${patch}-prerelease${increment}'
+
+      - name: Login to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: | 
+          echo "Attempting to login to Docker Hub"
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build the Docker image
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+         echo "Building Docker image with version: $VERSION"
+         docker build . --file .docker/Dockerfile -t api-model-ia:$VERSION
+      
+      - name: Push the Docker image
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          echo "Pushing Docker image with version: $VERSION"
+          docker push api-model-ia:$VERSION
