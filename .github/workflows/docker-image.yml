@@ -27,8 +27,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: | 
           echo "Attempting to login to Docker Hub"
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-
+          docker login -u $DOCKER_USER -p $(echo $DOCKER_PASSWORD) || echo "Login failed"
       - name: Build the Docker image
         env:
           VERSION: ${{ steps.version.outputs.version }}
