@@ -64,7 +64,7 @@ export class GetExternalDuckVqdService
       await route.continue();
     });
 
-    await page.goto(externalUrl!);
+    await page.goto(externalUrl!, { waitUntil: 'load', timeout: 60000 });
 
     const userAgent = await page.evaluate(() => navigator.userAgent);
 
