@@ -19,4 +19,7 @@ export class EnvironmentVariable {
   @IsNotEmpty()
   @MinLength(32)
   SECRET_KEY: string;
+
+  @IsOptional()
+  FINGERPRINT_EXPIRATION_MINUTES?: number;
 }

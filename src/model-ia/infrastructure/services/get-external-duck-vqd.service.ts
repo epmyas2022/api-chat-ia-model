@@ -17,12 +17,17 @@ export class GetExternalDuckVqdService
   extends GetApiKeyService
   implements OnModuleDestroy
 {
+  private readonly fingerprintExpirationMinutes: number;
+  private browser: Browser;
+  private fingerprint?: Fingerprint;
+
   constructor(
     private readonly configService: ConfigService<EnvironmentVariable>,
   ) {
     super();
+    this.fingerprintExpirationMinutes =
+      this.configService.get<number>('FINGERPRINT_EXPIRATION_MINUTES') ?? 60;
   }
-  private browser: Browser;
 
   async onModuleInit() {
     chromium.use(StealthPlugin());
@@ -39,6 +44,9 @@ export class GetExternalDuckVqdService
     }
   }
   async getApiKey(): Promise<PrimitiveFingerprint> {
+    if (this.fingerprint && !this.fingerprint.isExpired()) {
+      return this.fingerprint.toValue();
+    }
     if (!this.browser) {
       await this.onModuleInit();
     }
@@ -85,10 +93,12 @@ export class GetExternalDuckVqdService
     await page.waitForSelector('button[type="submit"]');
     await page.click('button[type="submit"]');
 
-    const fingerprint = Fingerprint.create({
+    this.fingerprint = Fingerprint.create({
       key: vqd,
       userAgent: userAgent,
+      expiredIn: this.fingerprintExpirationMinutes,
     });
-    return fingerprint.toValue();
+
+    return this.fingerprint.toValue();
   }
 }

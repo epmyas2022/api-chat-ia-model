@@ -30,8 +30,6 @@ export class HttpClientModelService extends HttpClientService {
       (error: AxiosError) => {
         //Respuesta del servidor
         let responseStream = '';
-
-        console.log('headers request', error.config?.headers);
         const rl = readline.createInterface({
           input: error.response?.data as Readable,
           crlfDelay: Infinity,
