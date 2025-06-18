@@ -26,6 +26,12 @@ export class ContextExternalDriver extends ContextOperation<ContextExternalDto> 
       responseType: 'json',
     });
 
+    if (!response || !response.data) {
+      throw new BadRequestException(
+        `No se obtuvo una respuesta válida del endpoint '${endpoint}': ${JSON.stringify(response?.data)}`,
+      );
+    }
+
     if (Array.isArray(response.data)) {
       throw new BadRequestException(
         `Se esperaba un 'objeto' en la respuesta del endpoint '${endpoint}', pero se obtuvo un 'array'.`,
