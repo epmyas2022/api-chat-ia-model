@@ -99,17 +99,25 @@ export class ModelMiniController {
 
   @Post(MODEL_CLAUDE_ROUTE_V1)
   async chatClaude(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+    const prompt = await this.getContextMessage(
+      chatModelMiniHttpDto.contextApi,
+    );
     const response = await this.responseOfModel(
       chatModelMiniHttpDto,
       ModelIA.CLAUDE,
+      prompt,
     );
     return response.json();
   }
   @Post(MODEL_MISTRAL_SMALL_ROUTE_V1)
   async chatMistralSmall(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+    const prompt = await this.getContextMessage(
+      chatModelMiniHttpDto.contextApi,
+    );
     const response = await this.responseOfModel(
       chatModelMiniHttpDto,
       ModelIA.MISTRAL_SMALL,
+      prompt,
     );
     return response.json();
   }
