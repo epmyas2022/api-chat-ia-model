@@ -60,4 +60,11 @@ export class HttpClientModelService extends HttpClientService {
     });
     return { data: response.data, headers: response.headers };
   }
+
+  async get(url: string, options?: object): Promise<PrimitiveHttpResponse> {
+    const response = await this.instance.get<Response>(url, {
+      ...options,
+    });
+    return { data: response.data, headers: response.headers };
+  }
 }

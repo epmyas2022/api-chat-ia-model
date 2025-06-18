@@ -8,4 +8,6 @@ export abstract class HttpClientService {
     data?: Record<string, unknown>,
     options?: object,
   ): Promise<PrimitiveHttpResponse>;
+
+  abstract get(url: string, options?: object): Promise<PrimitiveHttpResponse>;
 }

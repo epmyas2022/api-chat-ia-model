@@ -9,12 +9,14 @@ import { GetApiKeyService } from './domain/services/get-api-key.service';
 import { GetExternalDuckVqdService } from './infrastructure/services/get-external-duck-vqd.service';
 import { EncryptService } from './domain/services/encrypt.service';
 import { CryptoService } from './infrastructure/services/crypto.service';
+import { ContextDriver } from './domain/drivers/context.driver';
 
 @Module({
   imports: [],
   controllers: [ModelMiniController],
   providers: [
     HttpClientModelService,
+    ContextDriver,
     ModelChatUseCase,
     {
       provide: ModelService,
