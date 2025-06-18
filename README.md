@@ -121,6 +121,39 @@ Para todos lo modelos la estructura de la peticion es la siguiente:
 }   
 ```
 
+Tambien se puede hacer uso del `contextApi` esto nos permitira dar un contexto al modelo, para definir comportamientos o respuestas especificas.
+
+Ejemplo usando el driver `standard`:
+
+```json
+{
+  "message": "Hola",
+  "contextApi": {
+    "driver": "standard",
+    "context": {
+      "message": "Quiero que actues como un pirata y respondas como tal"
+    }
+  }
+}
+```
+
+Ejemplo usando el driver `external`:
+
+```json
+{
+ "message": "Hola",
+ "contextApi": {
+  "driver": "external",
+  "external": {
+   "endpoint": "https://dummyjson.com/c/b11c-f9b8-4e26-ac55",
+   "jsonPath": "$.model.prompt",
+   "query": {},
+   "headers": {}
+  }
+ }
+}
+```
+
 Para mantener la conversacion puedes usar el cursor que se devuelve en la respuesta anterior.
 
 ### MINIO3
