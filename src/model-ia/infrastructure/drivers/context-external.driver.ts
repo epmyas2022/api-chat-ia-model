@@ -5,7 +5,16 @@ import { JSONPath } from '@/shared/dependencies/jsonpath';
 import { BadRequestException } from '@nestjs/common';
 
 export class ContextExternalDriver extends ContextOperation<ContextExternalDto> {
-  constructor(private httpService: HttpClientService) {
+  static instace: ContextExternalDriver;
+
+  static getInstance(httpService: HttpClientService): ContextExternalDriver {
+    if (!ContextExternalDriver.instace) {
+      ContextExternalDriver.instace = new ContextExternalDriver(httpService);
+    }
+    return ContextExternalDriver.instace;
+  }
+
+  private constructor(private httpService: HttpClientService) {
     super();
   }
 

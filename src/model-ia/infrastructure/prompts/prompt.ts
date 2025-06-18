@@ -9,6 +9,7 @@ import {
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
 import { ContextDriver } from '@/model-ia/domain/drivers/context.driver';
 import { ContextApi } from '../api/chat/v1/model-mini-http.dto';
+import { ContextTypeDriver } from '../enum/driver.enum';
 
 export function loadPrompt(path: string): string {
   try {
@@ -39,13 +40,13 @@ export async function contextProvider(
     return;
   }
   const strategies = {
-    standard: {
+    [ContextTypeDriver.STANDARD]: {
       params: contextApi.context as ContextDto,
-      driver: new ContextStandardDriver(),
+      driver: ContextStandardDriver.getInstance(),
     },
-    external: {
+    [ContextTypeDriver.EXTERNAL]: {
       params: contextApi.external as ContextExternalDto,
-      driver: new ContextExternalDriver(httpClient),
+      driver: ContextExternalDriver.getInstance(httpClient),
     },
   };
 
