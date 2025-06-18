@@ -1,3 +1,4 @@
+import { ContextTypeDriver } from '@/model-ia/infrastructure/enum/driver.enum';
 import { Type } from 'class-transformer';
 import {
   IsString,
@@ -8,7 +9,7 @@ import {
   IsUrl,
   ValidateNested,
   ValidateIf,
-  IsIn,
+  IsEnum,
 } from 'class-validator';
 
 export class ContextDto {
@@ -38,16 +39,16 @@ export class ContextExternalDto {
 export class ContextApi {
   @IsString()
   @IsNotEmpty()
-  @IsIn(['standard', 'external'])
-  driver: 'standard' | 'external';
+  @IsEnum(ContextTypeDriver)
+  driver: ContextTypeDriver;
 
-  @ValidateIf((o: ContextApi) => o.driver === 'standard')
+  @ValidateIf((o: ContextApi) => o.driver === ContextTypeDriver.STANDARD)
   @IsObject()
   @ValidateNested()
   @Type(() => ContextDto)
   context?: ContextDto;
 
-  @ValidateIf((o: ContextApi) => o.driver === 'external')
+  @ValidateIf((o: ContextApi) => o.driver === ContextTypeDriver.EXTERNAL)
   @IsObject()
   @ValidateNested()
   @Type(() => ContextExternalDto)
