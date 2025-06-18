@@ -17,7 +17,6 @@ export class HttpClientModelService extends HttpClientService {
 
     this.instance = axios.create({
       baseURL: this.configService.get<string>('EXTERNAL_CHAT_IA_URL'),
-      responseType: 'stream',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -28,7 +27,13 @@ export class HttpClientModelService extends HttpClientService {
         return response;
       },
       (error: AxiosError) => {
-        //Respuesta del servidor
+        if (this.instance.defaults.responseType !== 'stream') {
+          return Promise.reject(
+            new ExternalModelException(
+              `Error in HTTP Client: ${error.message}`,
+            ),
+          );
+        }
         let responseStream = '';
         const rl = readline.createInterface({
           input: error.response?.data as Readable,

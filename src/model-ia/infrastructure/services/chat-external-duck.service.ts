@@ -33,6 +33,7 @@ export class ChatExternalDuckService extends ModelService {
         model,
       },
       {
+        responseType: 'stream',
         headers: {
           'X-Vqd-4': fingerprint.key,
           'User-Agent': fingerprint.userAgent,
