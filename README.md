@@ -26,7 +26,7 @@ crear un chat con modelos como *MINIO3*, *MINIO4*, *LLAMA*, *CLAUDE*, *MISTRAL*
   - [Ejecuta el servidor](#ejecuta-el-servidor)
   - [Instalación con Docker](#instalación-con-docker)
   - [Uso](#uso)
-    - [MINIO3](#minio3)
+    - [MINI](#mini)
     - [MINIO4](#minio4)
     - [LLAMA](#llama)
     - [CLAUDE](#claude)
@@ -144,6 +144,7 @@ Ejemplo usando el driver `external`:
  "message": "Hola",
  "contextApi": {
   "driver": "external",
+  "persist": false,
   "external": {
    "endpoint": "https://dummyjson.com/c/b11c-f9b8-4e26-ac55",
    "jsonPath": "$.model.prompt",
@@ -156,10 +157,10 @@ Ejemplo usando el driver `external`:
 
 Para mantener la conversacion puedes usar el cursor que se devuelve en la respuesta anterior.
 
-### MINIO3
+### MINI
 
 ```bash
-curl -X POST http://localhost:3000/chat/v1/mini03 \
+curl -X POST http://localhost:3000/chat/v1/mini \
 -H "Content-Type: application/json" \
 -d '{ 
     "message": "Hola, ¿cómo estás?",

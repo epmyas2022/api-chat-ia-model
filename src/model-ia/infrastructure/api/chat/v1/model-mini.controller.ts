@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseFilters } from '@nestjs/common';
 import {
   MODEL_BASE_PATH,
-  MODEL_MINI_O3_ROUTE_V1,
+  MODEL_MINI_ROUTE_V1,
   MODEL_MINI_O4_ROUTE_V1,
   MODEL_LLAMA_TURBO_ROUTE_V1,
   MODEL_CLAUDE_ROUTE_V1,
@@ -44,13 +44,13 @@ export class ModelMiniController {
     model: ModelIA,
     prompt?: { role: 'user' | 'assistant'; content: string },
   ): Promise<CursorResponse> {
-    const { message, cursor: cursorInput } = modelChatMiniHttpDto;
+    const { message, cursor: cursorInput, contextApi } = modelChatMiniHttpDto;
 
     const { response, cursor } = await this.modelChatUseCase.execute(
       {
         cursor: cursorInput,
         messages: [
-          ...(prompt && !cursorInput ? [prompt] : []),
+          ...(prompt && (!cursorInput || contextApi) ? [prompt] : []),
           {
             role: 'user',
             content: message,
@@ -62,11 +62,15 @@ export class ModelMiniController {
     return new CursorResponse(response, cursor);
   }
 
-  @Post(MODEL_MINI_O3_ROUTE_V1)
+  @Post(MODEL_MINI_ROUTE_V1)
   async chatGptMiniO3(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+    const prompt = await this.getContextMessage(
+      chatModelMiniHttpDto.contextApi,
+    );
     const response = await this.responseOfModel(
       chatModelMiniHttpDto,
-      ModelIA.GPT_MINI_O3,
+      ModelIA.GPT_MINI,
+      prompt,
     );
     return response.json();
   }
