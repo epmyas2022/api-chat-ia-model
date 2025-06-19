@@ -40,7 +40,7 @@ export class ContextExternalDriver extends ContextOperation<ContextExternalDto> 
 
     if (!content) {
       throw new BadRequestException(
-        `Se espera un 'string' en la ruta JSON '${jsonPath}', pero se obtuvo: ${JSON.stringify(data)}`,
+        `Se espera una cadena en la ruta JSON '${jsonPath}', pero se obtuvo: ${JSON.stringify(data)}`,
       );
     }
     return content;
