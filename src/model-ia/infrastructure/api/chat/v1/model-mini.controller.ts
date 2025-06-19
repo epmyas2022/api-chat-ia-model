@@ -63,7 +63,7 @@ export class ModelMiniController {
   }
 
   @Post(MODEL_MINI_ROUTE_V1)
-  async chatGptMiniO3(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+  async chatGptMini(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
     const prompt = await this.getContextMessage(
       chatModelMiniHttpDto.contextApi,
     );
