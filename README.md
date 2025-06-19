@@ -155,7 +155,9 @@ Ejemplo usando el driver `external`:
 }
 ```
 
-Para mantener la conversacion puedes usar el cursor que se devuelve en la respuesta anterior.
+Para mantener la conversacion puedes usar el *cursor* que se devuelve en la respuesta.
+
+**Nota:** Si el *contextApi* no cambia no es necesario enviarlo en cada peticion ya que el contexto se mantendra en el *cursor*. Si el *contextApi* cambia, debes enviar el nuevo contexto en cada peticion para que el chat tenga en cuenta el nuevo contexto.
 
 ### MINI
 
