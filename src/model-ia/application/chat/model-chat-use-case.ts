@@ -36,9 +36,8 @@ export class ModelChatUseCase {
 
   async execute(
     modelChat: ModelChatDto,
-    model: string,
   ): Promise<{ response: PrimitiveResponse; cursor: string }> {
-    const { messages, cursor: cursorInput } = modelChat;
+    const { messages, cursor: cursorInput, model } = modelChat;
 
     const messagesEntity = messages.map((message) => {
       const { role, content } = message;

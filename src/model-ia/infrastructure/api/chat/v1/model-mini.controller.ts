@@ -1,12 +1,8 @@
 import { Body, Controller, Post, UseFilters } from '@nestjs/common';
 import {
   MODEL_BASE_PATH,
-  MODEL_MINI_ROUTE_V1,
-  MODEL_MINI_O4_ROUTE_V1,
-  MODEL_LLAMA_TURBO_ROUTE_V1,
-  MODEL_CLAUDE_ROUTE_V1,
-  MODEL_MISTRAL_SMALL_ROUTE_V1,
   ABOUT_ME_ROUTE,
+  MODEL_ROUTE_V1,
 } from '@/model-ia/infrastructure/routes/chat.route';
 import {
   ContextDto,
@@ -41,80 +37,31 @@ export class ModelMiniController {
 
   private async responseOfModel(
     modelChatMiniHttpDto: ModelMiniHttpDto,
-    model: ModelIA,
     prompt?: { role: 'user' | 'assistant'; content: string },
   ): Promise<CursorResponse> {
-    const { message, cursor: cursorInput } = modelChatMiniHttpDto;
+    const {
+      message,
+      cursor: cursorInput,
+      model = ModelIA.GPT_MINI_O4,
+    } = modelChatMiniHttpDto;
 
-    const { response, cursor } = await this.modelChatUseCase.execute(
-      {
-        cursor: cursorInput,
-        messages: [
-          ...(prompt && !cursorInput ? [prompt] : []),
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
-      },
-      model,
-    );
+    const { response, cursor } = await this.modelChatUseCase.execute({
+      model: model,
+      cursor: cursorInput,
+      messages: [
+        ...(prompt && !cursorInput ? [prompt] : []),
+        {
+          role: 'user',
+          content: message,
+        },
+      ],
+    });
     return new CursorResponse(response, cursor);
   }
 
-  @Post(MODEL_MINI_ROUTE_V1)
-  async chatGptMini(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const response = await this.responseOfModel(
-      chatModelMiniHttpDto,
-      ModelIA.GPT_MINI,
-    );
-    return response.json();
-  }
-
-  @Post(MODEL_MINI_O4_ROUTE_V1)
-  async chatGptMiniO4(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const response = await this.responseOfModel(
-      chatModelMiniHttpDto,
-      ModelIA.GPT_MINI_O4,
-    );
-    return response.json();
-  }
-
-  @Post(MODEL_LLAMA_TURBO_ROUTE_V1)
-  async chatLlamaTurbo(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const prompt = await this.getContextMessage(
-      chatModelMiniHttpDto.contextApi,
-    );
-    const response = await this.responseOfModel(
-      chatModelMiniHttpDto,
-      ModelIA.LLAMA_TURBO,
-      prompt,
-    );
-    return response.json();
-  }
-
-  @Post(MODEL_CLAUDE_ROUTE_V1)
-  async chatClaude(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const prompt = await this.getContextMessage(
-      chatModelMiniHttpDto.contextApi,
-    );
-    const response = await this.responseOfModel(
-      chatModelMiniHttpDto,
-      ModelIA.CLAUDE,
-      prompt,
-    );
-    return response.json();
-  }
-  @Post(MODEL_MISTRAL_SMALL_ROUTE_V1)
-  async chatMistralSmall(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const prompt = await this.getContextMessage(
-      chatModelMiniHttpDto.contextApi,
-    );
-    const response = await this.responseOfModel(
-      chatModelMiniHttpDto,
-      ModelIA.MISTRAL_SMALL,
-      prompt,
-    );
+  @Post(MODEL_ROUTE_V1)
+  async chat(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
+    const response = await this.responseOfModel(chatModelMiniHttpDto);
     return response.json();
   }
 
@@ -122,7 +69,6 @@ export class ModelMiniController {
   async chatAboutMe(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
     const response = await this.responseOfModel(
       chatModelMiniHttpDto,
-      ModelIA.GPT_MINI_O4,
       promptAboutMe(),
     );
     return response.json();

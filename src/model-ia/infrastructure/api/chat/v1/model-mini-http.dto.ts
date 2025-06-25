@@ -1,4 +1,5 @@
 import { ContextTypeDriver } from '@/model-ia/infrastructure/enum/driver.enum';
+import { ModelIA } from '@/model-ia/infrastructure/enum/model.enum';
 import { Type } from 'class-transformer';
 import {
   IsString,
@@ -69,4 +70,10 @@ export class ModelMiniHttpDto {
   @ValidateNested()
   @Type(() => ContextApi)
   contextApi?: ContextApi;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(2)
+  @IsEnum(ModelIA)
+  model?: string;
 }
