@@ -44,11 +44,10 @@ export class ModelMiniController {
     model: ModelIA,
     prompt?: { role: 'user' | 'assistant'; content: string },
   ): Promise<CursorResponse> {
-    const { message, cursor: cursorInput, contextApi } = modelChatMiniHttpDto;
+    const { message, cursor: cursorInput } = modelChatMiniHttpDto;
 
     const { response, cursor } = await this.modelChatUseCase.execute(
       {
-        contextApi,
         cursor: cursorInput,
         messages: [
           ...(prompt && !cursorInput ? [prompt] : []),

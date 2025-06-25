@@ -3,13 +3,12 @@ import {
   PrimitiveMessage,
 } from '@/model-ia/domain/entities/message.entity';
 import { ModelService } from '../../domain/services/model.service';
-import { ContextApiDto, ModelChatDto } from './model-chat.dto';
+import { ModelChatDto } from './model-chat.dto';
 import { PrimitiveResponse } from '@/model-ia/domain/entities/response-model.entity';
 import { Injectable } from '@dependencies/injectable';
 import { ChatCursor } from '@/model-ia/domain/cursors/chat.cursor';
 import { GetApiKeyService } from '@/model-ia/domain/services/get-api-key.service';
 import { EncryptService } from '@/model-ia/domain/services/encrypt.service';
-import { ContextDriver } from '@/model-ia/domain/drivers/context.driver';
 
 @Injectable()
 export class ModelChatUseCase {
@@ -17,7 +16,6 @@ export class ModelChatUseCase {
     private readonly modelService: ModelService,
     private readonly getApiKeyService: GetApiKeyService,
     private readonly encryptService: EncryptService,
-    private readonly context: ContextDriver<ContextApiDto>,
   ) {}
 
   private async getCursorDefault(
@@ -40,7 +38,7 @@ export class ModelChatUseCase {
     modelChat: ModelChatDto,
     model: string,
   ): Promise<{ response: PrimitiveResponse; cursor: string }> {
-    const { messages, cursor: cursorInput, contextApi } = modelChat;
+    const { messages, cursor: cursorInput } = modelChat;
 
     const messagesEntity = messages.map((message) => {
       const { role, content } = message;
@@ -50,14 +48,6 @@ export class ModelChatUseCase {
     const cursor = cursorInput
       ? await this.getCursor(messagesEntity, cursorInput)
       : await this.getCursorDefault(messagesEntity);
-
-    if (contextApi) {
-      const contextResult = await this.context.context(contextApi);
-      cursor.Messages[0] = Message.create({
-        role: 'user',
-        content: contextResult,
-      }).toValue();
-    }
 
     const response = await this.modelService.chat(
       cursor.Messages,
