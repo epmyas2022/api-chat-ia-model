@@ -48,9 +48,10 @@ export class ModelMiniController {
 
     const { response, cursor } = await this.modelChatUseCase.execute(
       {
+        contextApi,
         cursor: cursorInput,
         messages: [
-          ...(prompt && (!cursorInput || contextApi) ? [prompt] : []),
+          ...(prompt && !cursorInput ? [prompt] : []),
           {
             role: 'user',
             content: message,
@@ -64,26 +65,18 @@ export class ModelMiniController {
 
   @Post(MODEL_MINI_ROUTE_V1)
   async chatGptMini(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const prompt = await this.getContextMessage(
-      chatModelMiniHttpDto.contextApi,
-    );
     const response = await this.responseOfModel(
       chatModelMiniHttpDto,
       ModelIA.GPT_MINI,
-      prompt,
     );
     return response.json();
   }
 
   @Post(MODEL_MINI_O4_ROUTE_V1)
   async chatGptMiniO4(@Body() chatModelMiniHttpDto: ModelMiniHttpDto) {
-    const prompt = await this.getContextMessage(
-      chatModelMiniHttpDto.contextApi,
-    );
     const response = await this.responseOfModel(
       chatModelMiniHttpDto,
       ModelIA.GPT_MINI_O4,
-      prompt,
     );
     return response.json();
   }
