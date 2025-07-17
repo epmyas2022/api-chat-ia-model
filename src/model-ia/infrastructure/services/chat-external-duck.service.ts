@@ -1,3 +1,8 @@
+/**
+ * DEPRECATED: This service is no longer in use.
+ * THE NEW SERVICE IS ChatOllamaService.
+ */
+
 import { ModelService } from '@/model-ia/domain/services/model.service';
 import { Injectable } from '@dependencies/injectable';
 import { PrimitiveMessage } from '@/model-ia/domain/entities/message.entity';

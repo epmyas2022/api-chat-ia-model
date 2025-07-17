@@ -20,6 +20,7 @@ import { CursorResponse } from '../../../responses/cursor.response';
 import { ContextDriver } from '@/model-ia/domain/drivers/context.driver';
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
 import { ContextApi } from './model-mini-http.dto';
+import { RoleType } from '@/model-ia/domain/entities/message.entity';
 
 @Controller(MODEL_BASE_PATH)
 @UseFilters(new HttpExceptionFilter())
@@ -37,12 +38,12 @@ export class ModelMiniController {
 
   private async responseOfModel(
     modelChatMiniHttpDto: ModelMiniHttpDto,
-    prompt?: { role: 'user' | 'assistant'; content: string },
+    prompt?: { role: RoleType; content: string },
   ): Promise<CursorResponse> {
     const {
       message,
       cursor: cursorInput,
-      model = ModelIA.GPT_MINI_O4,
+      model = ModelIA.LLAMA,
     } = modelChatMiniHttpDto;
 
     const { response, cursor } = await this.modelChatUseCase.execute({

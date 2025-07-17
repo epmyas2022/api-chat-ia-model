@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ChatExternalDuckService } from './infrastructure/services/chat-external-duck.service';
 import { ModelService } from './domain/services/model.service';
 import { ModelChatUseCase } from './application/chat/model-chat-use-case';
 import { ModelMiniController } from './infrastructure/api/chat/v1/model-mini.controller';
 import { HttpClientModelService } from '@/shared/services/http-client-model.service';
 import { HttpClientService } from '@/shared/domain/services/http-client.service';
 import { GetApiKeyService } from './domain/services/get-api-key.service';
-import { GetExternalDuckVqdService } from './infrastructure/services/get-external-duck-vqd.service';
 import { EncryptService } from './domain/services/encrypt.service';
 import { CryptoService } from './infrastructure/services/crypto.service';
 import { ContextDriver } from './domain/drivers/context.driver';
+import { ChatOllamaService } from './infrastructure/services/chat-ollama.service';
+import { GetOllamaVqdService } from './infrastructure/services/get-ollama-vqd.service';
 
 @Module({
   imports: [],
@@ -20,7 +20,8 @@ import { ContextDriver } from './domain/drivers/context.driver';
     ModelChatUseCase,
     {
       provide: ModelService,
-      useClass: ChatExternalDuckService,
+      //useClass: ChatExternalDuckService  (commented out to use ChatOllamaService),
+      useClass: ChatOllamaService,
     },
     {
       provide: HttpClientService,
@@ -28,7 +29,8 @@ import { ContextDriver } from './domain/drivers/context.driver';
     },
     {
       provide: GetApiKeyService,
-      useClass: GetExternalDuckVqdService,
+      //useClass: GetExternalDuckVqdService,
+      useClass: GetOllamaVqdService,
     },
 
     {

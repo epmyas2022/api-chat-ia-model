@@ -1,3 +1,8 @@
+/**
+ * DEPRECATED: This service is no longer in use.
+ * THE NEW SERVICE IS GetOllamaVqdService.
+ */
+
 import { GetApiKeyService } from '@/model-ia/domain/services/get-api-key.service';
 import { Injectable } from '@/shared/dependencies/injectable';
 import { EnvironmentVariable } from '@/shared/environment/env.variables';

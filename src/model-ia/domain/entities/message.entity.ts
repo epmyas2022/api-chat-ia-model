@@ -4,12 +4,13 @@ export class PrimitiveMessage {
   hidden?: boolean;
 }
 
+export type RoleType = 'user' | 'assistant' | 'system';
 export class Message {
   private constructor(private readonly attributes: PrimitiveMessage) {}
 
   /** FACTORY METHOD */
   static create(attributes: {
-    role: string;
+    role: RoleType;
     content: string;
     hidden?: boolean;
   }): Message {
