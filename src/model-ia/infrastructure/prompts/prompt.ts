@@ -10,6 +10,7 @@ import { HttpClientService } from '@/shared/domain/services/http-client.service'
 import { ContextDriver } from '@/model-ia/domain/drivers/context.driver';
 import { ContextApi } from '../api/chat/v1/model-mini-http.dto';
 import { ContextTypeDriver } from '../enum/driver.enum';
+import { RoleType } from '@/model-ia/domain/entities/message.entity';
 
 export function loadPrompt(path: string): string {
   try {
@@ -21,7 +22,7 @@ export function loadPrompt(path: string): string {
 }
 
 export function promptAboutMe(): {
-  role: 'user' | 'assistant';
+  role: RoleType;
   content: string;
 } {
   const content = loadPrompt(path.join(__dirname, 'about-me.txt'));
@@ -35,7 +36,7 @@ export async function contextProvider(
   context: ContextDriver<ContextDto | ContextExternalDto>,
   contextApi: ContextApi,
   httpClient: HttpClientService,
-): Promise<{ role: 'user' | 'assistant'; content: string } | undefined> {
+): Promise<{ role: RoleType; content: string } | undefined> {
   if (!contextApi) {
     return;
   }
@@ -60,7 +61,7 @@ export async function contextProvider(
   const message = await context.context(strategy.params);
 
   return {
-    role: 'user',
+    role: 'system',
     content: message,
   };
 }
